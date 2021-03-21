@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="css/style.css">
+    <title>momentum</title>
+</head>
+<body>
+    <div class="wrapper">
+        <div class="container">
+            <div class="js-clock">
+                <p class="js-time"></p>
+                <p class="js-date"></p>
+            </div>
+            <!-- clock -->
+
+            <form class="js-greetingsForm form">
+                <input type="text" placeholder="당신의 이름을 입력해주세요." />
+            </form>
+            <p class="js-greetings greetings"></p>
+            <!-- greetings -->
+
+            <form class="js-toDoForm form">
+                <input type="text" placeholder="오늘의 할 일을 입력해주세요." />
+            </form>
+            <!-- <ul class="js-toDoList">
+            </ul> -->
+
+            <div class="todoListWrap">
+                <div class="todoContainer">
+                    <h3>대기</h3>
+                    <div class="todoList">
+                        <p class="js-pending"></p>
+                    </div>
+                </div>
+
+                <div class="todoContainer">
+                    <h3>완료</h3>
+                    <div class="todoList finishList">
+                        <p class="js-finished"></p>
+                    </div>
+                </div>
+            </div>
+            <!-- toDo -->
+            <div class="weather-wrap">
+                <span class="js-weather"></span>
+            </div>
+            <!-- weather -->
+        </div>
+    </div>
+    <script src="js/bg.js"></script>
+    <script src="js/weather.js"></script>
+    <script src="js/todo.js"></script>
+    <script src="js/greeting.js"></script>
+    <script src="js/clock.js"></script>
+
+    <script src="js/fontAweSome/fontAweSome.js" crossorigin="anonymous"></script>
+</body>
+</html>
