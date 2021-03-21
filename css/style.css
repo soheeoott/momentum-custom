@@ -12,10 +12,6 @@
     padding: 0;
     outline: none;
     border: none;
-}
-
-ul,
-li {
     list-style: none;
 }
 
@@ -97,32 +93,34 @@ textarea:focus:-ms-input-placeholder {
     transform: translate(-50%, -50%);
 }
 
-.container {
+.wrapper .container {
     width: 600px;
     background: #f1f1f1f1;
     font-size: 24px;
     padding: 15px;
 }
 
-.js-clock {
+.container .js-clock {
     color: lightslategray;
     font-size: 30px;
 }
 
-.todoListWrap {
+.container .todoListWrap {
     display: flex;
     justify-content: space-between;
     background: white;
 }
 
-.todoListWrap button {
-    background: none;
-    cursor: pointer;
-}
-
-.todoContainer {
+.todoListWrap .todoContainer {
     width: 49%;
     height: 300px;
+}
+
+.todoContainer .todoList {
+    overflow-y: auto;
+    height: 230px;
+    padding: 10px;
+    font-size: 22px;
 }
 
 .todoContainer .finishList {
@@ -131,13 +129,11 @@ textarea:focus:-ms-input-placeholder {
     text-decoration-color: red;
 }
 
-.weather-wrap {
-    margin: 10px 0 0 0;
+.todoListWrap button {
+    background: none;
+    cursor: pointer;
 }
 
-.todoList {
-    overflow-y: auto;
-    height: 230px;
-    padding: 10px;
-    font-size: 22px;
+.container .weather-wrap {
+    margin: 10px 0 0 0;
 }
