@@ -1,171 +1,202 @@
 const toDoForm = document.querySelector(".js-toDoForm"),
-    toDoInput = toDoForm.querySelector("input"),
-    toDoPenList = document.querySelector(".js-pending"),
-    toDoFinList = document.querySelector(".js-finished");
+  toDoInput = toDoForm.querySelector("input"),
+  Pending = document.querySelector(".js-pending"),
+  Finished = document.querySelector(".js-finished");
 
-const PENDING = "PENDING";
-const FINISHED = "FINISHED";
+const PENDING_LS = "PENDING";
+const FINISHED_LS = "FINISHED";
 
-let penToDos, finToDos;
+let toDoPenArray = [];
+let toDoFinArray = [];
 
-function getToDoObject(todo){
-    return {
-        id : String(Date.now()),
-        todo
-    };
+function checkFinToDo(event) {
+    const li = event.target.parentNode;
+    Finished.removeChild(li);
+
+    // 옮길 대상을 pending 부분에 넣어줌
+    const moveChangeToDo = toDoFinArray.filter(function(toDo) {
+        return toDo.id === parseInt(li.id);
+    });
+
+    const undoChangeToDo = toDoFinArray.filter(function(toDo) {
+    // console.log("checkToDo/toDo.id, li.id = ", toDo.id, li.id);
+        return toDo.id !== parseInt(li.id);
+    });
+    toDoFinArray = undoChangeToDo;
+    
+    const moveChangeValue = moveChangeToDo[0].value;
+    printPenToDo(moveChangeValue);
+
+    saveFinToDo();
 }
 
-function deleteToDo(e){
+function checkToDo(event) {
+    const li = event.target.parentNode;
+    Pending.removeChild(li);
+
+    // 옮길 대상을 Finish 부분에 넣어줌
+    const moveChangeToDo = toDoPenArray.filter(function(toDo) {
+        return toDo.id === parseInt(li.id);
+    });
+    
+    const reChangeToDo = toDoPenArray.filter(function(toDo) {
+    // console.log("checkToDo/toDo.id, li.id = ", toDo.id, li.id);
+        return toDo.id !== parseInt(li.id);
+    });
+    toDoPenArray = reChangeToDo;
+
+    const moveChangeId = moveChangeToDo[0].id;
+    const moveChangeValue = moveChangeToDo[0].value;
+    printFinToDo(moveChangeId, moveChangeValue);
+
+    savePenToDo();
+}
+
+// deleteFinToDo
+function deleteFinToDo(event) {
     if (confirm("정말 삭제하시겠습니까?") == true){
-        const li = e.target.parentNode; // parentNode = Document node return
-        li.parentNode.removeChild(li);
-        
-        finToDos = finToDos.filter((todo) => {
-            return todo.id !== li.id;
+        const li = event.target.parentNode;  
+        Finished.removeChild(li);
+
+        const cleanFinToDo = toDoFinArray.filter(function (toDo) {
+        // click // error
+        return toDo.id !== parseInt(li.id); // 필터를 통해 새로운 array 생성
         });
 
-        penToDos = penToDos.filter((todo) => {
-            return todo.id !== li.id;
-        });
+        console.log(toDoFinArray);
+        console.log(cleanFinToDo);
 
-        saveToDos();
+        toDoFinArray = cleanFinToDo; // swap
+        console.log(toDoFinArray);
+
+        saveFinToDo();
     } else {
         return false;
     }
 }
 
-// finish
-function removePen(todoId){
-    penToDos = penToDos.filter((todo) => {
-        return todo.id !== todoId;  
-    });
-}
+// deletePenToDo
+function deletePenToDo(event) {
+    if (confirm("정말 삭제하시겠습니까?") == true){
+        const li = event.target.parentNode;
+        Pending.removeChild(li);
 
-function finishFind(todoId){
-    return penToDos.find((todo) => {
-        return todo.id === todoId;
-    });
-}
+        const cleanPenToDo = toDoPenArray.filter(function (toDo) {
+        // click
+        return toDo.id !== parseInt(li.id); // 필터를 통해 새로운 array 생성
+        });
 
-function finBtnClick(e){
-    const li = e.target.parentNode;
-    li.parentNode.removeChild(li);
-    const todo = finishFind(li.id);
-    removePen(li.id);
-
-    finToDos.push(todo);
-    paintFinToDo(todo);
-    saveToDos();
-}
-// <-- finish -->
-
-// undo
-function removeFin(todoId){
-    finToDos = finToDos.filter((todo) => {
-      return todo.id !== todoId;  
-    });
-}
-
-function undoFind(todoId){
-    return finToDos.find((todo) => {
-        return todo.id === todoId;
-    });
-}
-
-function undoBtnClick(e) {
-    const li = e.target.parentNode;
-    li.parentNode.removeChild(li);
-    const todo = undoFind(li.id);
-    removeFin(li.id);
-
-    penToDos.push(todo);
-    paintPenToDo(todo);
-    saveToDos();
-}
-// <-- undo -->
-
-function genericLi(todo){
-    const li = document.createElement("li"); // li 생성
-    const span = document.createElement("span");
-
-    span.innerText = todo.todo;
-    li.append(span); // span → il, delBtn → il 
-    li.id = todo.id; // id 생성
-    return li;
-}
-
-function paintPenToDo(todo){ // 화면(HTML)에 출력
-    const createLi = genericLi(todo);
-    const finBtn = document.createElement("button");
-    const delBtn = document.createElement("button");
-
-    finBtn.innerText = "✅";
-    finBtn.addEventListener("click", finBtnClick);
-    
-    delBtn.innerText = "❌";
-    delBtn.addEventListener("click", deleteToDo);
-
-    createLi.append(finBtn, delBtn);
-    toDoPenList.append(createLi);
-}
-
-function paintFinToDo(todo){
-    const createLi = genericLi(todo);
-    const undoBtn = document.createElement("button");
-    const delBtn = document.createElement("button");
-
-    undoBtn.innerText = "↩️";
-    undoBtn.addEventListener("click", undoBtnClick);
-
-    delBtn.innerText = "❌";
-    delBtn.addEventListener("click", deleteToDo);
-
-    createLi.append(undoBtn, delBtn);
-    toDoFinList.append(createLi);
-}
-
-function saveToDos(){ // localStorage 에 목록 저장
-    // localStorage 에는 자바스크립트의 data 를 저장할 수 없음 → 오직 문자열만 저장
-    localStorage.setItem(PENDING, JSON.stringify(penToDos)); // JSON.stringify() : 객체 → 문자열로 변환
-    localStorage.setItem(FINISHED, JSON.stringify(finToDos));
-}
-
-function loadToDos(){ // 저장되어 있는 목록의 값 불러오기
-    penToDos = JSON.parse(localStorage.getItem(PENDING)) || []; // string → object
-    finToDos = JSON.parse(localStorage.getItem(FINISHED)) || [];
-}
-
-function undoToDos(){
-    penToDos.forEach((todo) => {
-        paintPenToDo(todo);
-    });
-    finToDos.forEach((todo) => {
-        paintFinToDo(todo);
-    });
-}
-
-function savePenToDo(todo) {
-    penToDos.push(todo);
-}
-
-function handleToDoSubmit(e){ 
-    e.preventDefault();
-    const toDoObj = getToDoObject(toDoInput.value);
-    
-    if(toDoInput.value !== "") {
-        paintPenToDo(toDoObj);
-        savePenToDo(toDoObj);
-        saveToDos();
-        toDoInput.value = "";
+        toDoPenArray = cleanPenToDo; // swap
+        savePenToDo();
     } else {
-        alert("내용을 입력해주세요.");
+        return false;
+    }    
+}
+
+function saveFinToDo() {
+  localStorage.setItem(FINISHED_LS, JSON.stringify(toDoFinArray));
+} // object → string
+
+function savePenToDo() {
+  localStorage.setItem(PENDING_LS, JSON.stringify(toDoPenArray));
+} // object → string
+
+// printFinToDo
+function printFinToDo(id, value) {
+    const li = document.createElement("li");
+    const span = document.createElement("span");
+    const UnChkBtn = document.createElement("button");
+    const delBtn = document.createElement("button");
+
+    span.innerText = value;
+    UnChkBtn.innerText = "↩️";
+    delBtn.innerText = "❌";
+    
+    UnChkBtn.addEventListener("click", checkFinToDo);
+    delBtn.addEventListener("click", deleteFinToDo);
+    
+    li.appendChild(span);
+    li.appendChild(UnChkBtn);
+    li.appendChild(delBtn);
+    li.id = id;
+    Finished.appendChild(li);
+
+    const toDoFinObj = {
+        id : id,
+        value : value
+    };
+    toDoFinArray.push(toDoFinObj);
+    saveFinToDo();
+}
+
+// printPenToDo
+function printPenToDo(value) {
+    const li = document.createElement("li");
+    const span = document.createElement("span");
+    const chkBtn = document.createElement("button");
+    const delBtn = document.createElement("button");
+    const newId = Date.now();
+
+    span.innerText = value;
+    chkBtn.innerText = "✅";
+    delBtn.innerText = "❌";
+    
+    chkBtn.addEventListener("click", checkToDo);
+    delBtn.addEventListener("click", deletePenToDo);
+    
+    li.appendChild(span);
+    li.appendChild(chkBtn);
+    li.appendChild(delBtn);
+    li.id = newId;
+
+    Pending.appendChild(li);
+    const toDoPendingObj = {
+        id: newId,
+        value: value
+    };
+    toDoPenArray.push(toDoPendingObj);
+    savePenToDo();   
+}
+
+function toDoFormSubmit(event) {
+    event.preventDefault();
+    const toDoValue = toDoInput.value;
+    printPenToDo(toDoValue);
+    toDoInput.value = "";
+}
+
+function loadFinToDos(){
+    const loadSucFinToDos = localStorage.getItem(FINISHED_LS);
+    console.log(loadSucFinToDos);
+    if (loadSucFinToDos !== null) {
+        const parseFinToDos = JSON.parse(loadSucFinToDos); // object
+        console.log(parseFinToDos);
+        parseFinToDos.forEach(function(todo) {
+            printFinToDo(todo.id, todo.value);
+            console.log(todo.id, todo.value);
+        });
+    } else {
+        localStorage.removeItem(FINISHED_LS);
     }
 }
 
-function init(){
-    loadToDos();
-    undoToDos();
-    toDoForm.addEventListener("submit", handleToDoSubmit);
+function loadPenToDos(){
+    const loadSucPenToDos = localStorage.getItem(PENDING_LS);
+    if (loadSucPenToDos !== null) {
+        const parsePenToDos = JSON.parse(loadSucPenToDos); // object
+        parsePenToDos.forEach(function(todo) {
+            printPenToDo(todo.value);
+            console.log(todo.value);
+        });
+    } else {
+        localStorage.removeItem(PENDING_LS);
+    }
+}
+
+function init() {
+  loadPenToDos(); // load
+  loadFinToDos();
+  toDoForm.addEventListener("submit", toDoFormSubmit);
 }
 
 init();
