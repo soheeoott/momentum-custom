@@ -113,16 +113,10 @@ textarea:focus:-ms-input-placeholder {
     display: flex;
     justify-content: space-between;
     background: white;
-    /* height: 300px; */
 }
 
 .todoListWrap button {
     background: none;
-    font-size: 24px;
-    cursor: pointer;
-}
-
-.todoListWrap button i {
     cursor: pointer;
 }
 
@@ -145,4 +139,5 @@ textarea:focus:-ms-input-placeholder {
     overflow-y: auto;
     height: 230px;
     padding: 10px;
+    font-size: 22px;
 }
