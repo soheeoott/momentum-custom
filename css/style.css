@@ -132,6 +132,7 @@ textarea:focus:-ms-input-placeholder {
 .todoListWrap button {
     background: none;
     cursor: pointer;
+    font-size: 20px;
 }
 
 .container .weather-wrap {
